@@ -1,26 +1,580 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Coming soon</title>
-    <meta name="description" content="Coming soon" />
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cmime — Digital Catalogs, Simplified</title>
+    <meta name="description" content="Browse digital catalogs and flipbooks from your favorite brands, all in one modern platform." />
+    <meta name="theme-color" content="#1C2541" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-      body { margin: 0; font-family: Arial, sans-serif; background: #0b0f14; color: #e8eef6; }
-      .wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
-      .card { max-width: 720px; width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 32px; }
-      h1 { margin: 0 0 8px; font-size: 40px; letter-spacing: 0.5px; }
-      p { margin: 0; opacity: 0.85; font-size: 16px; line-height: 1.6; }
-      .tiny { margin-top: 18px; font-size: 13px; opacity: 0.65; }
+      /* ============================================
+         Global Styles & CSS Variables
+         ============================================ */
+      :root {
+        --color-primary: #E5484D;
+        --color-primary-hover: #FF5A5F;
+        --color-primary-subtle: rgba(229, 72, 77, 0.08);
+        --color-dark: #1C2541;
+        --color-dark-secondary: #2A3158;
+        --color-dark-tertiary: #354170;
+        --color-bg: #FFFFFF;
+        --color-bg-subtle: #F7F8FA;
+        --color-bg-muted: #EEF0F4;
+        --color-text-primary: #1C2541;
+        --color-text-secondary: #5A6178;
+        --color-text-muted: #8B92A8;
+        --color-text-on-dark: #FFFFFF;
+        --color-text-on-dark-secondary: #A0A8C0;
+        --color-border: #E2E5EC;
+        --color-border-subtle: #F0F1F5;
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-3xl: 64px;
+        --space-4xl: 96px;
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --radius-full: 9999px;
+        --transition-fast: 150ms ease;
+        --transition-base: 250ms ease;
+        --transition-slow: 400ms ease;
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--font-family);
+        color: var(--color-text-primary);
+        background-color: var(--color-bg);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .app {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* ============================================
+         Keyframe Animations
+         ============================================ */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(28px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+
+      @keyframes scrollBounce {
+        0%, 100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(10px);
+          opacity: 0.3;
+        }
+      }
+
+      /* ============================================
+         Hero Section
+         ============================================ */
+      .hero {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: var(--space-3xl) var(--space-lg);
+        background-color: var(--color-bg);
+        overflow: hidden;
+      }
+
+      .hero__bg-glow {
+        position: absolute;
+        top: -20%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(
+          circle,
+          rgba(229, 72, 77, 0.06) 0%,
+          rgba(229, 72, 77, 0.02) 40%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .hero__bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(28, 37, 65, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(28, 37, 65, 0.02) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .hero__container {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 720px;
+        width: 100%;
+      }
+
+      .hero__logo-wrapper {
+        margin-bottom: var(--space-3xl);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+
+      .hero.visible .hero__logo-wrapper {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .hero__logo {
+        width: 180px;
+        height: auto;
+      }
+
+      .hero__headline {
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        font-weight: 700;
+        line-height: 1.15;
+        color: var(--color-dark);
+        letter-spacing: -0.02em;
+        margin-bottom: var(--space-lg);
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.8s ease 0.15s, transform 0.8s ease 0.15s;
+      }
+
+      .hero.visible .hero__headline {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .hero__headline-accent {
+        color: var(--color-primary);
+      }
+
+      .hero__subtext {
+        font-size: clamp(1rem, 2.2vw, 1.2rem);
+        line-height: 1.7;
+        color: var(--color-text-secondary);
+        max-width: 540px;
+        margin-bottom: var(--space-4xl);
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+      }
+
+      .hero.visible .hero__subtext {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .br-desktop {
+        display: none;
+      }
+
+      .hero__scroll-indicator {
+        width: 24px;
+        height: 40px;
+        border-radius: var(--radius-full);
+        border: 2px solid var(--color-border);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 8px;
+        opacity: 0;
+        transition: opacity 0.8s ease 0.6s;
+      }
+
+      .hero.visible .hero__scroll-indicator {
+        opacity: 1;
+      }
+
+      .hero__scroll-dot {
+        width: 4px;
+        height: 8px;
+        border-radius: var(--radius-full);
+        background-color: var(--color-primary);
+        animation: scrollBounce 2s ease-in-out infinite;
+      }
+
+      /* ============================================
+         Coming Soon Section
+         ============================================ */
+      .coming-soon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-4xl) var(--space-lg);
+        background-color: var(--color-bg-subtle);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .coming-soon::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse at 30% 50%,
+            rgba(229, 72, 77, 0.04) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse at 70% 50%,
+            rgba(28, 37, 65, 0.03) 0%,
+            transparent 60%
+          );
+        pointer-events: none;
+      }
+
+      .coming-soon__container {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      .coming-soon__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: 6px 16px 6px 12px;
+        background: rgba(229, 72, 77, 0.08);
+        border: 1px solid rgba(229, 72, 77, 0.15);
+        border-radius: var(--radius-full);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--color-primary);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: var(--space-xl);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .coming-soon.visible .coming-soon__badge {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .coming-soon__badge-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--color-primary);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .coming-soon__heading {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        color: var(--color-dark);
+        letter-spacing: -0.02em;
+        margin-bottom: var(--space-lg);
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+      }
+
+      .coming-soon.visible .coming-soon__heading {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .coming-soon__text {
+        font-size: clamp(0.95rem, 2vw, 1.125rem);
+        line-height: 1.8;
+        color: var(--color-text-secondary);
+        max-width: 480px;
+        margin-bottom: var(--space-3xl);
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+      }
+
+      .coming-soon.visible .coming-soon__text {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .coming-soon__divider {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        opacity: 0;
+        transition: opacity 0.8s ease 0.4s;
+      }
+
+      .coming-soon.visible .coming-soon__divider {
+        opacity: 1;
+      }
+
+      .coming-soon__divider-line {
+        width: 48px;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(229, 72, 77, 0.3),
+          transparent
+        );
+      }
+
+      .coming-soon__divider-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--color-primary);
+        opacity: 0.5;
+      }
+
+      /* ============================================
+         Footer
+         ============================================ */
+      .footer {
+        background-color: var(--color-bg);
+        padding: var(--space-lg);
+        border-top: 1px solid var(--color-border);
+      }
+
+      .footer__container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-md);
+        max-width: 1200px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+      }
+
+      .footer__brand {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-dark);
+        letter-spacing: -0.01em;
+      }
+
+      .footer__separator {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: var(--color-text-muted);
+        opacity: 0.5;
+      }
+
+      .footer__copy {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+      }
+
+      /* ============================================
+         Responsive
+         ============================================ */
+      @media (min-width: 768px) {
+        .br-desktop {
+          display: block;
+        }
+
+        .hero__logo {
+          width: 220px;
+        }
+
+        .coming-soon {
+          padding: 120px var(--space-lg);
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .hero__logo {
+          width: 240px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .footer__container {
+          flex-direction: column;
+          gap: var(--space-sm);
+        }
+
+        .footer__separator {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="wrap">
-      <div class="card">
-        <h1>Coming soon</h1>
-        <p>We're working on something new. Check back soon.</p>
-        <p class="tiny">If you need to reach us: info@yourdomain.com</p>
-      </div>
+    <div class="app">
+      <!-- Hero Section -->
+      <section class="hero" id="hero">
+        <div class="hero__bg-glow" aria-hidden="true"></div>
+        <div class="hero__bg-grid" aria-hidden="true"></div>
+
+        <div class="hero__container">
+          <div class="hero__logo-wrapper">
+            <img
+              src="logo.png"
+              alt="cmime logo"
+              class="hero__logo"
+              width="180"
+              height="52"
+            />
+          </div>
+
+          <h1 class="hero__headline">
+            Browse Digital Catalogs,
+            <br />
+            <span class="hero__headline-accent">Effortlessly</span>
+          </h1>
+
+          <p class="hero__subtext">
+            cmime brings brand catalogs and flipbooks into one modern platform.
+            <br class="br-desktop" />
+            Discover offers from your favorite retailers — all in one place.
+          </p>
+
+          <div class="hero__scroll-indicator" aria-hidden="true">
+            <div class="hero__scroll-dot"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coming Soon Section -->
+      <section class="coming-soon" id="coming-soon">
+        <div class="coming-soon__container">
+          <div class="coming-soon__badge">
+            <span class="coming-soon__badge-dot" aria-hidden="true"></span>
+            Launching Soon
+          </div>
+
+          <h2 class="coming-soon__heading">Coming Soon</h2>
+
+          <p class="coming-soon__text">
+            We're preparing a smarter way to explore your favorite brand catalogs.
+            <br class="br-desktop" />
+            A better browsing experience is on its way.
+          </p>
+
+          <div class="coming-soon__divider" aria-hidden="true">
+            <div class="coming-soon__divider-line"></div>
+            <div class="coming-soon__divider-dot"></div>
+            <div class="coming-soon__divider-line"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer__container">
+          <span class="footer__brand">cmime</span>
+          <span class="footer__separator" aria-hidden="true"></span>
+          <span class="footer__copy"></span>
+        </div>
+      </footer>
     </div>
+
+    <script>
+      // Dynamic copyright year
+      document.querySelector('.footer__copy').textContent =
+        '\u00A9 ' + new Date().getFullYear() + ' All rights reserved';
+
+      // Intersection Observer for scroll-triggered animations
+      var heroSection = document.getElementById('hero');
+      var comingSoonSection = document.getElementById('coming-soon');
+
+      var heroObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      var comingSoonObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      heroObserver.observe(heroSection);
+      comingSoonObserver.observe(comingSoonSection);
+    </script>
   </body>
 </html>
